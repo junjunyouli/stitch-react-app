@@ -1,0 +1,5 @@
+name = "stitch-react-app"
+
+compatibility_date = "2026-03-15"
+
+pages_build_output_dir = "dist"

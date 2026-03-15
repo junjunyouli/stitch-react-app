@@ -12,8 +12,13 @@
     "test:report": "mkdir -p reports && vitest run --reporter=json --outputFile=reports/vitest-results.json && node scripts/generate-test-report.mjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
+    "@trpc/client": "^11.13.3",
+    "@trpc/react-query": "^11.13.3",
+    "@trpc/server": "^11.13.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

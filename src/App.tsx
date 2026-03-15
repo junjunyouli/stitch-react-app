@@ -1,6 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { DAILY_FORTUNE_SHARE_TEXT } from './lib/scratchCard';
+import { trpc } from "./trpc";
 
+function Test() {
+  const hello = trpc.hello.useQuery({
+    name: "Jason"
+  });
+
+  if (hello.isLoading) return <p>Loading...</p>;
+
+  if (hello.error) {
+    console.log(111, hello);
+    return <p>Error: {hello.error.message}</p>;
+  }
+
+  return <h1>{hello.data?.message}</h1>;
+}
 const App = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const instructionText = 'Use your finger to scratch the gold area!';
@@ -11,14 +26,14 @@ const App = () => {
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
-    
+
     let isDrawing = false;
     const initCanvas = () => {
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       gradient.addColorStop(0, '#D4AF37');
       gradient.addColorStop(0.5, '#F9E076');
       gradient.addColorStop(1, '#B8860B');
-      
+
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -26,10 +41,10 @@ const App = () => {
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.textAlign = 'center';
       ctx.fillText('SCRATCH HERE', canvas.width / 2, canvas.height / 2);
-      
-      for(let i=0; i<500; i++) {
+
+      for (let i = 0; i < 500; i++) {
         ctx.fillStyle = 'rgba(255,255,255,0.1)';
-        ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
+        ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
       }
     };
 
@@ -54,7 +69,7 @@ const App = () => {
       e.preventDefault();
       const event = e as unknown as MouseEvent | TouchEvent;
       const pos = getMousePos(event);
-      
+
       ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = 50;
       ctx.lineCap = 'round';
@@ -72,18 +87,18 @@ const App = () => {
       if (e.type === 'touchstart') e.preventDefault();
       const event = e as unknown as MouseEvent | TouchEvent;
       lastPos = getMousePos(event);
-      
+
       // Draw a dot right where user clicks to start
       scratch(e);
     };
     const handleUp = () => isDrawing = false;
-    
+
     canvas.addEventListener('mousedown', handleDown);
-    canvas.addEventListener('touchstart', handleDown, {passive: false});
+    canvas.addEventListener('touchstart', handleDown, { passive: false });
     window.addEventListener('mouseup', handleUp);
     window.addEventListener('touchend', handleUp);
     canvas.addEventListener('mousemove', scratch);
-    canvas.addEventListener('touchmove', scratch, {passive: false});
+    canvas.addEventListener('touchmove', scratch, { passive: false });
 
     return () => {
       canvas.removeEventListener('mousedown', handleDown);
@@ -136,7 +151,7 @@ const App = () => {
         </h1>
         <p className="text-mystic-light/80 text-sm mt-1 uppercase tracking-widest">Scratch to Reveal Your Destiny</p>
       </header>
-      
+
       {/* ScratchSection */}
       <main className="w-full flex flex-col items-center gap-8">
         <div data-purpose="scratch-game-area" id="scratch-container">
@@ -179,6 +194,7 @@ const App = () => {
         <p className="text-center text-xs text-white/70" role="status" aria-live="polite">
           {shareFeedback}
         </p>
+        <Test />
       </footer>
     </div>
   );
