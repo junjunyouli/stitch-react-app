@@ -1,13 +1,11 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "../../router";
+import { appRouter } from "../router";
 
 export const onRequest = async (context: any) => {
-
     return fetchRequestHandler({
         endpoint: "/api/trpc",
         req: context.request,
         router: appRouter,
         createContext: () => ({}),
     });
-
 };
