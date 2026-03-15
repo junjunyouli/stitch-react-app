@@ -1,14 +1,17 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
+import { createTestWrapper } from './test-utils';
 
 describe('App', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
+  const Wrapper = createTestWrapper();
+
   it('renders the page heading and default guidance', () => {
-    render(<App />);
+    render(<App />, { wrapper: Wrapper });
 
     expect(screen.getByRole('heading', { name: /daily fortune/i })).toBeInTheDocument();
     expect(screen.getByText(/scratch to reveal your destiny/i)).toBeInTheDocument();
@@ -18,12 +21,14 @@ describe('App', () => {
 
   it('uses the native share api when available', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
+
     Object.defineProperty(navigator, 'share', {
       configurable: true,
       value: share,
     });
 
-    render(<App />);
+    render(<App />, { wrapper: Wrapper });
+
     fireEvent.click(screen.getByRole('button', { name: /share my fortune/i }));
 
     await waitFor(() => {
@@ -35,16 +40,19 @@ describe('App', () => {
 
   it('falls back to clipboard when share api is unavailable', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
+
     Object.defineProperty(navigator, 'share', {
       configurable: true,
       value: undefined,
     });
+
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText },
     });
 
-    render(<App />);
+    render(<App />, { wrapper: Wrapper });
+
     fireEvent.click(screen.getByRole('button', { name: /share my fortune/i }));
 
     await waitFor(() => {
